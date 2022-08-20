@@ -5,7 +5,8 @@ import csv
 
 def connect():
     oracle_pass = os.environ.get('ORACLEPASS')
-    conn = cx_Oracle.connect(f'ADMIN/{oracle_pass}@tacservicesdb_high')
+    oracle_user = os.environ.get('ORACLEUSER')
+    conn = cx_Oracle.connect(f'{oracle_user}/{oracle_pass}@tacservicesdb_high')
     return conn.cursor()
 
 #Gera o nome das colunas e coloca de forma linear
@@ -38,5 +39,5 @@ def readArchive(path,sep,tablename):
         for line in csv_reader:
             return line
 
-readArchive(path = r'G:\Meu Drive\3.python\Bases\BasesSellin\\BaseComercial_Trade.txt',sep='|',)
+#readArchive(path = r'',sep='|',)
 
