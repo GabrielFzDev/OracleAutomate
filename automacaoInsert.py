@@ -1,5 +1,6 @@
 import cx_Oracle
 import os
+import csv
 
 
 def connect():
@@ -28,5 +29,14 @@ def generateSqlInsert(tableName):
             values = values + f"nvl(:{i},'')" #NVL para se for null a informação colocar ''
         else:
             values = values + f", nvl(:{i},'')" # retorna o comando insert completo
-    return f'INSERT INTO {tableName} ({colunas[0]}) values({values})'
+    format = 'INSERT INTO {tableName} ({colunas[0]}) values({values})'
+
+#Ler o Arquivo e printar a primeira Coluna que normalment eh o cabeça~lho
+def readArchive(path,sep,tablename):
+    with open(path,'r', encoding='UTF-8') as csv_file:
+        csv_reader = csv.reader(csv_file,delimiter=sep)
+        for line in csv_reader:
+            return line
+
+readArchive(path = r'G:\Meu Drive\3.python\Bases\BasesSellin\\BaseComercial_Trade.txt',sep='|',)
 
