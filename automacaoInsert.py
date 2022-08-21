@@ -1,7 +1,9 @@
 import cx_Oracle
 import os
 import csv
+import datetime
 
+archiveLines = []
 
 def connect():
     oracle_pass = os.environ.get('ORACLEPASS')
@@ -33,11 +35,27 @@ def generateSqlInsert(tableName):
     format = 'INSERT INTO {tableName} ({colunas[0]}) values({values})'
 
 #Ler o Arquivo e printar a primeira Coluna que normalment eh o cabeça~lho
-def readArchive(path,sep,tablename):
+def readArchiveSnapshot(path,sep,tablename):
+    tableColunms = generateColumns(tablename) #pegar numero das Colunas
     with open(path,'r', encoding='UTF-8') as csv_file:
         csv_reader = csv.reader(csv_file,delimiter=sep)
         for line in csv_reader:
-            return line
+            temp = []
+            header = line
+            archiveColunms = len(line) + 1 # Abrir o arquivo e ver numero de Colunas + snapshot
+            if not archiveColunms == tableColunms[1]:
+                print('Number of colunms isnt the same!') # e nao for igual para o programa
+                return archiveColunms, tableColunms[1]
+            else: # se for igual colocar uma lista de listas
+                temp.append(datetime.datetime.strftime(datetime.datetime.now(),'%d/%m/%Y'))
+                for data in line:
+                    temp.append(data)
+                
+                archiveLines.append(tuple(temp))
+    return tuple(archiveLines) # retornar como tuplas de tuplas
+    
+print(readArchiveSnapshot(path=r'',sep='',tablename=''))
+
 
 #readArchive(path = r'',sep='|',)
 
