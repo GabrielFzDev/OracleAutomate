@@ -4,6 +4,7 @@ import csv
 import datetime
 
 archiveLines = []
+listColunms = []
 
 def connect():
     oracle_pass = os.environ.get('ORACLEPASS')
@@ -15,13 +16,14 @@ def connect():
 def generateColumns(tableName):
     cursor = connect()
     cursor.execute(f'select * from {tableName}')
-
+    
     for i,column in enumerate(cursor.description):
+        listColunms.append(column[0])
         if i == 0:
             columns = column[0]
         else:
             columns = columns + ', '+column[0]
-    return columns,len(cursor.description)
+    return columns,len(cursor.description), listColunms
 
 # Pega o nome das colunas e quantas colunas sao para fazer um comando SQL de insert completo
 def generateSqlInsert(tableName):
@@ -42,6 +44,7 @@ def readArchiveSnapshot(path,sep,tablename):
         for line in csv_reader:
             temp = []
             header = line
+            regexColunms(header,tableColunms[2])
             archiveColunms = len(line) + 1 # Abrir o arquivo e ver numero de Colunas + snapshot
             if not archiveColunms == tableColunms[1]:
                 print('Number of colunms isnt the same!') # e nao for igual para o programa
@@ -50,12 +53,13 @@ def readArchiveSnapshot(path,sep,tablename):
                 temp.append(datetime.datetime.strftime(datetime.datetime.now(),'%d/%m/%Y'))
                 for data in line:
                     temp.append(data)
-                
                 archiveLines.append(tuple(temp))
+                break
     return tuple(archiveLines) # retornar como tuplas de tuplas
-    
-print(readArchiveSnapshot(path=r'',sep='',tablename=''))
 
+def regexColunms(header, colunms):
+    print(header,colunms)
+#Colunas com o mesmo nome
 
 #readArchive(path = r'',sep='|',)
 
